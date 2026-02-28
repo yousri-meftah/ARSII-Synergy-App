@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite
+*.db
+.env
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Flutter (root-level safety)
+arsii_mvp/build/
+arsii_mvp/.dart_tool/
+arsii_mvp/.pub-cache/
+arsii_mvp/.idea/
+arsii_mvp/android/.gradle/
+arsii_mvp/android/app/build/
+arsii_mvp/ios/Pods/
+
+# Editor
+.vscode/
+.idea/
+
+# Node
+node_modules/
