@@ -2,7 +2,7 @@
 
 A modern, role‑based project and task management app built for ARSII‑Sfax to unify teams, tasks, and progress tracking.
 
-**Demo video (2 min):** XXXXX
+**Demo video (2 min):** https://drive.google.com/drive/folders/1Ruxz313gfkBhZF5tUqdBvLpM5-G-gdtf?usp=sharing
 
 ## Quick Start
 
