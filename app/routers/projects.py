@@ -16,7 +16,7 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 def create_project(
     payload: schemas.ProjectCreate,
     db: Session = Depends(get_db),
-    current: models.User = Depends(require_roles(models.Role.MANAGER, models.Role.LEAD)),
+    current: models.User = Depends(require_roles(models.Role.ADMIN, models.Role.MANAGER, models.Role.LEAD)),
 ):
     ensure_user_in_team(current, payload.team_id)
     project = models.Project(
@@ -45,11 +45,15 @@ def list_projects(
     db: Session = Depends(get_db),
     current: models.User = Depends(get_current_user),
 ):
-    if current.role not in (models.Role.ADMIN, models.Role.MANAGER, models.Role.LEAD):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     query = db.query(models.Project)
     if current.role == models.Role.LEAD:
         query = query.filter(models.Project.team_id == current.team_id)
+    elif current.role == models.Role.USER:
+        query = (
+            query.join(models.Task, models.Task.project_id == models.Project.id)
+            .filter(models.Task.assignee_id == current.id)
+            .distinct()
+        )
     if team_id is not None:
         query = query.filter(models.Project.team_id == team_id)
     if status is not None:
@@ -85,7 +89,7 @@ def update_project(
     project_id: int,
     payload: schemas.ProjectUpdate,
     db: Session = Depends(get_db),
-    current: models.User = Depends(require_roles(models.Role.MANAGER, models.Role.LEAD)),
+    current: models.User = Depends(require_roles(models.Role.ADMIN, models.Role.MANAGER, models.Role.LEAD)),
 ):
     project = db.get(models.Project, project_id)
     if not project:

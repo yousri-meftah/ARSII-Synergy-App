@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:arsii_mvp/models/enums.dart';
 import 'package:arsii_mvp/state/auth_state.dart';
 import 'package:arsii_mvp/screens/dashboard_screen.dart';
-import 'package:arsii_mvp/screens/tasks_screen.dart';
 import 'package:arsii_mvp/screens/notifications_screen.dart';
 import 'package:arsii_mvp/screens/projects_screen.dart';
 import 'package:arsii_mvp/screens/teams_screen.dart';
 import 'package:arsii_mvp/screens/workload_screen.dart';
 import 'package:arsii_mvp/screens/profile_screen.dart';
-import 'package:arsii_mvp/screens/settings_screen.dart';
+import 'package:arsii_mvp/screens/ai_chat_screen.dart';
 import 'package:arsii_mvp/state/ws_state.dart';
 import 'package:arsii_mvp/state/providers.dart';
 
@@ -32,6 +31,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ref.invalidate(tasksProvider(const TaskFilter()));
       ref.invalidate(dashboardProvider);
       ref.invalidate(notificationsProvider);
+      ref.invalidate(aiInsightsProvider);
+      ref.invalidate(aiConflictsProvider);
     });
 
     final tabs = _tabsForRole(role);
@@ -39,10 +40,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ARSII-Sfax'),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(Icons.blur_on),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AIChatScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.auto_awesome),
           ),
         ],
       ),
@@ -64,9 +71,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       case Role.lead:
         return [
           _HomeTab('Dashboard', Icons.dashboard, const DashboardScreen()),
-          _HomeTab('Team Tasks', Icons.list_alt, const TasksScreen(scope: TaskScope.team)),
+          _HomeTab('Projects', Icons.folder, const ProjectsScreen()),
           _HomeTab('Workload', Icons.stacked_bar_chart, const WorkloadScreen()),
           _HomeTab('Alerts', Icons.notifications, const NotificationsScreen()),
+          _HomeTab('AI', Icons.auto_awesome, const AIChatScreen()),
           _HomeTab('Profile', Icons.person, const ProfileScreen()),
         ];
       case Role.manager:
@@ -75,16 +83,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           _HomeTab('Dashboard', Icons.dashboard, const DashboardScreen()),
           _HomeTab('Projects', Icons.folder, const ProjectsScreen()),
           _HomeTab('Teams', Icons.group, const TeamsScreen()),
-          _HomeTab('Settings', Icons.settings, const SettingsScreen()),
           _HomeTab('Alerts', Icons.notifications, const NotificationsScreen()),
+          _HomeTab('AI', Icons.auto_awesome, const AIChatScreen()),
           _HomeTab('Profile', Icons.person, const ProfileScreen()),
         ];
       case Role.user:
       default:
         return [
           _HomeTab('Dashboard', Icons.dashboard, const DashboardScreen()),
-          _HomeTab('My Tasks', Icons.checklist, const TasksScreen(scope: TaskScope.mine)),
+          _HomeTab('Projects', Icons.folder, const ProjectsScreen()),
           _HomeTab('Alerts', Icons.notifications, const NotificationsScreen()),
+          _HomeTab('AI', Icons.auto_awesome, const AIChatScreen()),
           _HomeTab('Profile', Icons.person, const ProfileScreen()),
         ];
     }

@@ -26,6 +26,8 @@ def can_access_project(user: models.User, project: models.Project) -> bool:
         return True
     if user.role == models.Role.LEAD and user.team_id == project.team_id:
         return True
+    if user.role == models.Role.USER:
+        return any(task.assignee_id == user.id for task in project.tasks)
     return False
 
 

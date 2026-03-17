@@ -120,6 +120,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                   await service.addComment(task.id, _commentCtrl.text.trim());
                   _commentCtrl.clear();
                   ref.invalidate(commentsProvider(widget.taskId));
+                  ref.invalidate(notificationsProvider);
                 },
                 child: const Text('Post Comment'),
               ),

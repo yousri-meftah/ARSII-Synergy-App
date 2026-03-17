@@ -207,6 +207,7 @@ class DashboardLead(DashboardBase):
 
 
 class DashboardManager(DashboardBase):
+    team_tasks: list[TaskOut] = []
     projects_summary: dict[str, int]
     team_summary: dict[str, int]
 
@@ -214,3 +215,103 @@ class DashboardManager(DashboardBase):
 class DashboardAdmin(DashboardManager):
     user_count: int
     team_count: int
+
+
+class AIInsightItem(BaseModel):
+    title: str
+    detail: str
+    priority: str
+    entity_type: str | None = None
+    entity_id: int | None = None
+
+
+class AIInsightsResponse(BaseModel):
+    summary: str
+    source: str
+    generated_at: datetime
+    scope: str
+    insights: list[AIInsightItem]
+
+
+class AIConflictItem(BaseModel):
+    title: str
+    detail: str
+    severity: str
+    recommendation: str
+    entity_type: str | None = None
+    entity_id: int | None = None
+
+
+class AIConflictsResponse(BaseModel):
+    summary: str
+    source: str
+    generated_at: datetime
+    scope: str
+    conflicts: list[AIConflictItem]
+
+
+class AIChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class AIChatRequest(BaseModel):
+    message: str
+    history: list[AIChatMessage] = []
+
+
+class AIChatResponse(BaseModel):
+    reply: str
+    source: str
+    generated_at: datetime
+    scope: str
+
+
+class AIRecommendedMember(BaseModel):
+    user_id: int
+    full_name: str
+    team_id: int | None = None
+    team_name: str | None = None
+    role: str | None = None
+    availability: str | None = None
+    match_percentage: int | None = None
+    reason: str
+
+
+class AIRecommendedRoleSlot(BaseModel):
+    label: str
+    count: int
+    note: str
+
+
+class AIRecommendedTeam(BaseModel):
+    team_id: int
+    team_name: str
+    score: float
+    reason: str
+    specialties: list[str]
+    members: list[AIRecommendedMember]
+
+
+class AIPlannedTask(BaseModel):
+    title: str
+    description: str
+    recommended_assignee_id: int | None = None
+    recommended_assignee_name: str | None = None
+
+
+class AIProjectPlanRequest(BaseModel):
+    name: str
+    description: str
+    due_date: date | None = None
+
+
+class AIProjectPlanResponse(BaseModel):
+    summary: str
+    source: str
+    generated_at: datetime
+    suggested_team_size: int
+    recommended_people: list[AIRecommendedMember]
+    suggested_roles: list[AIRecommendedRoleSlot]
+    recommended_teams: list[AIRecommendedTeam]
+    tasks: list[AIPlannedTask]

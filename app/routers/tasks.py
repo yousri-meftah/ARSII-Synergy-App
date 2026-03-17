@@ -35,7 +35,7 @@ async def _emit_task_event(request: Request, event: str, task: models.Task) -> N
 async def create_task(
     payload: schemas.TaskCreate,
     db: Session = Depends(get_db),
-    current: models.User = Depends(require_roles(models.Role.MANAGER, models.Role.LEAD)),
+    current: models.User = Depends(require_roles(models.Role.ADMIN, models.Role.MANAGER, models.Role.LEAD)),
     request: Request = None,
 ):
     project = db.get(models.Project, payload.project_id)

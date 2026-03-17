@@ -29,6 +29,23 @@ class TaskService {
         .toList();
   }
 
+  Future<Task> create({
+    required int projectId,
+    required String title,
+    required String description,
+    required int assigneeId,
+    required String dueDate,
+  }) async {
+    final res = await _dio().post('/tasks', data: {
+      'project_id': projectId,
+      'title': title,
+      'description': description,
+      'assignee_id': assigneeId,
+      'due_date': dueDate,
+    });
+    return Task.fromJson(res.data as Map<String, dynamic>);
+  }
+
   Future<Task> getById(int id) async {
     final res = await _dio().get('/tasks/$id');
     return Task.fromJson(res.data as Map<String, dynamic>);

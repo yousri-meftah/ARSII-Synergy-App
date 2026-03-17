@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:arsii_mvp/state/auth_state.dart';
+import 'package:arsii_mvp/screens/login_screen.dart';
+import 'package:arsii_mvp/screens/settings_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -74,6 +76,23 @@ class ProfileScreen extends ConsumerWidget {
           ),
           Card(
             child: ListTile(
+              leading: const Icon(Icons.settings_outlined),
+              title: const Text('Settings'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => Scaffold(
+                      appBar: AppBar(title: const Text('Settings')),
+                      body: const SettingsScreen(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
               leading: const Icon(Icons.lock_outline),
               title: const Text('Security'),
               trailing: const Icon(Icons.chevron_right),
@@ -91,7 +110,15 @@ class ProfileScreen extends ConsumerWidget {
         ],
         const SizedBox(height: 12),
         ElevatedButton.icon(
-          onPressed: () async => ref.read(authProvider.notifier).logout(),
+          onPressed: () async {
+            await ref.read(authProvider.notifier).logout();
+            if (context.mounted) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (_) => false,
+              );
+            }
+          },
           icon: const Icon(Icons.logout),
           label: const Text('Logout'),
         ),

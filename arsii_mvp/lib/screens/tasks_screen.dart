@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:arsii_mvp/models/enums.dart';
 import 'package:arsii_mvp/state/providers.dart';
+import 'package:arsii_mvp/state/auth_state.dart';
 import 'package:arsii_mvp/widgets/task_list.dart';
 
 enum TaskScope { mine, team, all }
@@ -20,7 +21,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filter = TaskFilter(status: _status, search: _search);
+    final auth = ref.watch(authProvider);
+    int? assigneeId;
+    if (widget.scope == TaskScope.mine && auth.user != null) {
+      assigneeId = auth.user!.id;
+    }
+    final filter = TaskFilter(
+      status: _status,
+      search: _search,
+      assigneeId: assigneeId,
+    );
     final asyncTasks = ref.watch(tasksProvider(filter));
 
     return Padding(

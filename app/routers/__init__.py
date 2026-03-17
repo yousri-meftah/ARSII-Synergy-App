@@ -1,4 +1,4 @@
-from app.routers import auth, users, teams, projects, tasks, comments, notifications, dashboard, workload
+from app.routers import auth, users, teams, projects, tasks, comments, notifications, dashboard, workload, ai
 
 __all__ = [
     "auth",
@@ -10,4 +10,5 @@ __all__ = [
     "notifications",
     "dashboard",
     "workload",
+    "ai",
 ]

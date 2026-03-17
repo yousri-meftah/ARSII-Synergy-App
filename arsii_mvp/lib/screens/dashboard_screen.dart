@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:arsii_mvp/state/providers.dart';
 import 'package:arsii_mvp/models/enums.dart';
+import 'package:arsii_mvp/models/ai.dart';
 import 'package:arsii_mvp/widgets/task_list.dart';
 import 'package:arsii_mvp/screens/notifications_screen.dart';
 
@@ -19,12 +20,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final asyncDash = ref.watch(dashboardProvider);
+    final asyncInsights = ref.watch(aiInsightsProvider);
+    final asyncConflicts = ref.watch(aiConflictsProvider);
 
     return asyncDash.when(
       data: (dash) {
         return RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(dashboardProvider);
+            ref.invalidate(aiInsightsProvider);
+            ref.invalidate(aiConflictsProvider);
           },
           child: ListView(
             physics: const BouncingScrollPhysics(),
@@ -75,6 +80,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 16),
+              _AICard(
+                title: 'AI Insights',
+                icon: Icons.auto_awesome,
+                child: asyncInsights.when(
+                  data: (data) => _InsightsBody(data: data),
+                  loading: () => const _AICardLoading(),
+                  error: (e, _) => Text('Failed to load AI insights: $e'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (dash.role != Role.user)
+                _AICard(
+                  title: 'Conflict Watch',
+                  icon: Icons.hub_outlined,
+                  child: asyncConflicts.when(
+                    data: (data) => _ConflictsBody(data: data),
+                    loading: () => const _AICardLoading(),
+                    error: (e, _) => Text('Failed to load conflicts: $e'),
+                  ),
+                ),
+              if (dash.role != Role.user) const SizedBox(height: 16),
               _SectionHeader(
                 title: dash.role == Role.user ? 'My Tasks' : 'Team Tasks',
                 action: 'View All',
@@ -321,4 +347,291 @@ class _TeamPerson {
   final String name;
   final String role;
   const _TeamPerson(this.name, this.role);
+}
+
+class _AICard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Widget child;
+
+  const _AICard({
+    required this.title,
+    required this.icon,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1F2A44), Color(0xFF2E5BBA)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: Colors.white),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InsightsBody extends StatelessWidget {
+  final AIInsightsResponse data;
+
+  const _InsightsBody({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          data.summary,
+          style: const TextStyle(color: Colors.white, height: 1.4),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final insight in data.insights.take(4))
+              _SignalChip(
+                label: insight.title,
+                tone: insight.priority,
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        for (final insight in data.insights.take(2))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _PriorityBadge(label: insight.priority),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          insight.title,
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          insight.detail,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        Text(
+          'Source: ${data.source.toUpperCase()}',
+          style: const TextStyle(color: Colors.white60, fontSize: 11),
+        ),
+      ],
+    );
+  }
+}
+
+class _ConflictsBody extends StatelessWidget {
+  final AIConflictsResponse data;
+
+  const _ConflictsBody({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    if (data.conflicts.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(data.summary, style: const TextStyle(color: Colors.white)),
+          const SizedBox(height: 8),
+          const Text('No active conflicts detected.', style: TextStyle(color: Colors.white70)),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(data.summary, style: const TextStyle(color: Colors.white, height: 1.4)),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final conflict in data.conflicts.take(4))
+              _SignalChip(
+                label: conflict.title,
+                tone: conflict.severity,
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        for (final conflict in data.conflicts.take(3))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _PriorityBadge(label: conflict.severity),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          conflict.title,
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(conflict.detail, style: const TextStyle(color: Colors.white70)),
+                  const SizedBox(height: 6),
+                  Text(
+                    conflict.recommendation,
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _SignalChip extends StatelessWidget {
+  final String label;
+  final String tone;
+
+  const _SignalChip({
+    required this.label,
+    required this.tone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: _toneColor(tone),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Color _toneColor(String tone) {
+  switch (tone.toLowerCase()) {
+    case 'high':
+      return const Color(0xFFEF4444);
+    case 'medium':
+      return const Color(0xFFF59E0B);
+    default:
+      return const Color(0xFF10B981);
+  }
+}
+
+class _PriorityBadge extends StatelessWidget {
+  final String label;
+
+  const _PriorityBadge({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.14),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label.toUpperCase(),
+        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+class _AICardLoading extends StatelessWidget {
+  const _AICardLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: Center(
+        child: SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+        ),
+      ),
+    );
+  }
 }

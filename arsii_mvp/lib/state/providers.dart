@@ -7,6 +7,7 @@ import 'package:arsii_mvp/services/notification_service.dart';
 import 'package:arsii_mvp/services/team_service.dart';
 import 'package:arsii_mvp/services/workload_service.dart';
 import 'package:arsii_mvp/services/user_service.dart';
+import 'package:arsii_mvp/services/ai_service.dart';
 import 'package:arsii_mvp/models/task.dart';
 import 'package:arsii_mvp/models/project.dart';
 import 'package:arsii_mvp/models/dashboard.dart';
@@ -15,6 +16,7 @@ import 'package:arsii_mvp/models/team.dart';
 import 'package:arsii_mvp/models/enums.dart';
 import 'package:arsii_mvp/models/comment.dart';
 import 'package:arsii_mvp/models/user.dart';
+import 'package:arsii_mvp/models/ai.dart';
 
 final tokenProvider = Provider<String?>((ref) => ref.watch(authProvider).token);
 
@@ -74,6 +76,11 @@ final userServiceProvider = Provider<UserService>((ref) {
   return UserService(token ?? '');
 });
 
+final aiServiceProvider = Provider<AIService>((ref) {
+  final token = ref.watch(tokenProvider);
+  return AIService(token ?? '');
+});
+
 final tasksProvider = FutureProvider.family<List<Task>, TaskFilter>((ref, filter) async {
   final service = ref.watch(taskServiceProvider);
   return service.list(
@@ -112,6 +119,16 @@ final teamsProvider = FutureProvider<List<Team>>((ref) async {
 final usersProvider = FutureProvider<List<User>>((ref) async {
   final service = ref.watch(userServiceProvider);
   return service.list();
+});
+
+final aiInsightsProvider = FutureProvider<AIInsightsResponse>((ref) async {
+  final service = ref.watch(aiServiceProvider);
+  return service.insights();
+});
+
+final aiConflictsProvider = FutureProvider<AIConflictsResponse>((ref) async {
+  final service = ref.watch(aiServiceProvider);
+  return service.conflicts();
 });
 
 final teamHierarchyProvider = FutureProvider.family<TeamHierarchy, int>((ref, teamId) async {

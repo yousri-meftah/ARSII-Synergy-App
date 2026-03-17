@@ -15,31 +15,34 @@ class NotificationsScreen extends ConsumerWidget {
         if (items.isEmpty) {
           return const Center(child: Text('No notifications'));
         }
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: items.length,
-          itemBuilder: (context, i) {
-            final n = items[i];
-            return Card(
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.12),
-                  child: Icon(Icons.notifications, color: Theme.of(context).colorScheme.secondary),
+        return RefreshIndicator(
+          onRefresh: () async => ref.invalidate(notificationsProvider),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: items.length,
+            itemBuilder: (context, i) {
+              final n = items[i];
+              return Card(
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.12),
+                    child: Icon(Icons.notifications, color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  title: Text(n.type.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text(n.payload),
+                  trailing: n.readAt == null
+                      ? TextButton(
+                          onPressed: () async {
+                            await service.markRead(n.id);
+                            ref.invalidate(notificationsProvider);
+                          },
+                          child: const Text('Mark read'),
+                        )
+                      : const Text('Read'),
                 ),
-                title: Text(n.type.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text(n.payload),
-                trailing: n.readAt == null
-                    ? TextButton(
-                        onPressed: () async {
-                          await service.markRead(n.id);
-                          ref.invalidate(notificationsProvider);
-                        },
-                        child: const Text('Mark read'),
-                      )
-                    : const Text('Read'),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),

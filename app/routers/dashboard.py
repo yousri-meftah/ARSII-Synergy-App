@@ -82,6 +82,7 @@ def get_dashboard(
                 total_tasks=total,
                 overdue_tasks=overdue,
                 due_soon_tasks=due_soon,
+                team_tasks=tasks[:8],
                 projects_summary=projects_summary,
                 team_summary=team_summary,
                 user_count=db.query(models.User).count(),
@@ -92,6 +93,7 @@ def get_dashboard(
             total_tasks=total,
             overdue_tasks=overdue,
             due_soon_tasks=due_soon,
+            team_tasks=tasks[:8],
             projects_summary=projects_summary,
             team_summary=team_summary,
         )

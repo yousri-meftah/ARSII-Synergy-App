@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.auth import get_db, get_current_user
@@ -15,11 +15,12 @@ router = APIRouter(prefix="/tasks", tags=["comments"])
     summary="Add comment",
     description="Accepts: CommentCreate. Returns: CommentOut.",
 )
-def add_comment(
+async def add_comment(
     task_id: int,
     payload: schemas.CommentCreate,
     db: Session = Depends(get_db),
     current: models.User = Depends(get_current_user),
+    request: Request = None,
 ):
     task = db.get(models.Task, task_id)
     if not task:
@@ -51,8 +52,39 @@ def add_comment(
             )
         )
 
+    # Notify Admins and Managers as well (competition visibility)
+    admins_managers = (
+        db.query(models.User)
+        .filter(models.User.role.in_([models.Role.ADMIN, models.Role.MANAGER]))
+        .all()
+    )
+    for user in admins_managers:
+        if user.id == current.id:
+            continue
+        db.add(
+            models.Notification(
+                user_id=user.id,
+                type=models.NotificationType.COMMENT_ADDED,
+                payload=json.dumps({"task_id": task_id}),
+                created_at=datetime.utcnow(),
+            )
+        )
+
     db.commit()
     db.refresh(comment)
+    if request is not None:
+        await request.app.state.ws_manager.broadcast(
+            {
+                "event": "COMMENT_ADDED",
+                "comment": {
+                    "id": comment.id,
+                    "task_id": comment.task_id,
+                    "author_id": comment.author_id,
+                    "body": comment.body,
+                    "created_at": comment.created_at.isoformat(),
+                },
+            }
+        )
     return comment
 
 

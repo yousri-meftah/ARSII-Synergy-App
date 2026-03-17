@@ -11,13 +11,13 @@ def seed_data(db: Session) -> None:
     admin = models.User(
         email="admin@arsii.local",
         password_hash=hash_password("admin123"),
-        full_name="Admin",
+        full_name="Amina Rekik",
         role=models.Role.ADMIN,
     )
     manager = models.User(
         email="manager@arsii.local",
         password_hash=hash_password("manager123"),
-        full_name="Manager",
+        full_name="Marouen Chaabane",
         role=models.Role.MANAGER,
     )
 
@@ -26,6 +26,10 @@ def seed_data(db: Session) -> None:
     team_c = models.Team(name="Data & Ops")
     team_d = models.Team(name="Mobile Team")
     team_e = models.Team(name="QA & Support")
+    team_f = models.Team(name="Communication Team")
+    team_g = models.Team(name="Marketing Team")
+    team_h = models.Team(name="Organization Team")
+    team_i = models.Team(name="Partnerships & Outreach")
 
     lead_a = models.User(
         email="lead.a@arsii.local",
@@ -61,6 +65,34 @@ def seed_data(db: Session) -> None:
         full_name="Sami Jaziri",
         role=models.Role.LEAD,
         team=team_e,
+    )
+    lead_f = models.User(
+        email="lead.f@arsii.local",
+        password_hash=hash_password("lead123"),
+        full_name="Mouna Ben Amor",
+        role=models.Role.LEAD,
+        team=team_f,
+    )
+    lead_g = models.User(
+        email="lead.g@arsii.local",
+        password_hash=hash_password("lead123"),
+        full_name="Karim Mzoughi",
+        role=models.Role.LEAD,
+        team=team_g,
+    )
+    lead_h = models.User(
+        email="lead.h@arsii.local",
+        password_hash=hash_password("lead123"),
+        full_name="Ines Kammoun",
+        role=models.Role.LEAD,
+        team=team_h,
+    )
+    lead_i = models.User(
+        email="lead.i@arsii.local",
+        password_hash=hash_password("lead123"),
+        full_name="Nader Ghariani",
+        role=models.Role.LEAD,
+        team=team_i,
     )
 
     user_a1 = models.User(
@@ -175,6 +207,90 @@ def seed_data(db: Session) -> None:
         role=models.Role.USER,
         team=team_e,
     )
+    user_f1 = models.User(
+        email="user.f1@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Rania Abid",
+        role=models.Role.USER,
+        team=team_f,
+    )
+    user_f2 = models.User(
+        email="user.f2@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Oussama Ben Romdhane",
+        role=models.Role.USER,
+        team=team_f,
+    )
+    user_f3 = models.User(
+        email="user.f3@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Syrine Dridi",
+        role=models.Role.USER,
+        team=team_f,
+    )
+    user_g1 = models.User(
+        email="user.g1@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Walid Khelil",
+        role=models.Role.USER,
+        team=team_g,
+    )
+    user_g2 = models.User(
+        email="user.g2@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Nesrine Hamza",
+        role=models.Role.USER,
+        team=team_g,
+    )
+    user_g3 = models.User(
+        email="user.g3@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Yasmine Kefi",
+        role=models.Role.USER,
+        team=team_g,
+    )
+    user_h1 = models.User(
+        email="user.h1@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Mohamed Ali Triki",
+        role=models.Role.USER,
+        team=team_h,
+    )
+    user_h2 = models.User(
+        email="user.h2@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Lobna Saied",
+        role=models.Role.USER,
+        team=team_h,
+    )
+    user_h3 = models.User(
+        email="user.h3@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Abir Karray",
+        role=models.Role.USER,
+        team=team_h,
+    )
+    user_i1 = models.User(
+        email="user.i1@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Bilel Jebali",
+        role=models.Role.USER,
+        team=team_i,
+    )
+    user_i2 = models.User(
+        email="user.i2@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Rahma Mnif",
+        role=models.Role.USER,
+        team=team_i,
+    )
+    user_i3 = models.User(
+        email="user.i3@arsii.local",
+        password_hash=hash_password("user123"),
+        full_name="Sarra Ben Hmida",
+        role=models.Role.USER,
+        team=team_i,
+    )
 
     db.add_all([
         admin,
@@ -184,11 +300,19 @@ def seed_data(db: Session) -> None:
         team_c,
         team_d,
         team_e,
+        team_f,
+        team_g,
+        team_h,
+        team_i,
         lead_a,
         lead_b,
         lead_c,
         lead_d,
         lead_e,
+        lead_f,
+        lead_g,
+        lead_h,
+        lead_i,
         user_a1,
         user_a2,
         user_a3,
@@ -205,6 +329,18 @@ def seed_data(db: Session) -> None:
         user_e2,
         user_e3,
         user_e4,
+        user_f1,
+        user_f2,
+        user_f3,
+        user_g1,
+        user_g2,
+        user_g3,
+        user_h1,
+        user_h2,
+        user_h3,
+        user_i1,
+        user_i2,
+        user_i3,
     ])
     db.flush()
 
@@ -213,6 +349,10 @@ def seed_data(db: Session) -> None:
     team_c.lead_id = lead_c.id
     team_d.lead_id = lead_d.id
     team_e.lead_id = lead_e.id
+    team_f.lead_id = lead_f.id
+    team_g.lead_id = lead_g.id
+    team_h.lead_id = lead_h.id
+    team_i.lead_id = lead_i.id
 
     project_a = models.Project(
         name="Sfax Smart Campus",
@@ -277,8 +417,44 @@ def seed_data(db: Session) -> None:
         due_date=date.today(),
         status=models.ProjectStatus.ACTIVE,
     )
+    project_h = models.Project(
+        name="Annual Innovation Summit",
+        description="Event organization, agenda, venue, and speaker coordination",
+        owner_id=manager.id,
+        team_id=team_h.id,
+        start_date=date.today(),
+        due_date=date.today(),
+        status=models.ProjectStatus.ACTIVE,
+    )
+    project_i = models.Project(
+        name="Press & Media Outreach",
+        description="Communication plan, press kit, media contacts, and announcement copy",
+        owner_id=manager.id,
+        team_id=team_f.id,
+        start_date=date.today(),
+        due_date=date.today(),
+        status=models.ProjectStatus.ACTIVE,
+    )
+    project_j = models.Project(
+        name="Spring Campaign",
+        description="Marketing launch, social media content, and audience activation",
+        owner_id=manager.id,
+        team_id=team_g.id,
+        start_date=date.today(),
+        due_date=date.today(),
+        status=models.ProjectStatus.ACTIVE,
+    )
+    project_k = models.Project(
+        name="Partner Network Forum",
+        description="External relations, sponsorship outreach, partner meetings, and invitations",
+        owner_id=manager.id,
+        team_id=team_i.id,
+        start_date=date.today(),
+        due_date=date.today(),
+        status=models.ProjectStatus.ACTIVE,
+    )
 
-    db.add_all([project_a, project_b, project_c, project_d, project_e, project_f, project_g])
+    db.add_all([project_a, project_b, project_c, project_d, project_e, project_f, project_g, project_h, project_i, project_j, project_k])
     db.flush()
 
     tasks = [
@@ -426,6 +602,114 @@ def seed_data(db: Session) -> None:
             due_date=date.today(),
             created_by=lead_b.id,
         ),
+        models.Task(
+            project_id=project_h.id,
+            title="Event agenda and speaker flow",
+            description="Prepare summit agenda, speaker order, and session coordination",
+            assignee_id=user_h1.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_h.id,
+        ),
+        models.Task(
+            project_id=project_h.id,
+            title="Venue and logistics plan",
+            description="Handle venue setup, registration desk, and onsite organization",
+            assignee_id=user_h2.id,
+            status=models.TaskStatus.IN_PROGRESS,
+            due_date=date.today(),
+            created_by=lead_h.id,
+        ),
+        models.Task(
+            project_id=project_h.id,
+            title="Volunteer coordination",
+            description="Organize team shifts, event support, and attendee guidance",
+            assignee_id=user_h3.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_h.id,
+        ),
+        models.Task(
+            project_id=project_i.id,
+            title="Press release draft",
+            description="Prepare official communication for media and public announcement",
+            assignee_id=user_f1.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_f.id,
+        ),
+        models.Task(
+            project_id=project_i.id,
+            title="Media contact coordination",
+            description="Reach journalists, manage interview requests, and confirm publication windows",
+            assignee_id=user_f2.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_f.id,
+        ),
+        models.Task(
+            project_id=project_i.id,
+            title="Live communication coverage",
+            description="Prepare updates, coverage plan, and community communication assets",
+            assignee_id=user_f3.id,
+            status=models.TaskStatus.IN_PROGRESS,
+            due_date=date.today(),
+            created_by=lead_f.id,
+        ),
+        models.Task(
+            project_id=project_j.id,
+            title="Campaign concept and messaging",
+            description="Define launch message, audience angle, and promotion hooks",
+            assignee_id=user_g1.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_g.id,
+        ),
+        models.Task(
+            project_id=project_j.id,
+            title="Social media launch calendar",
+            description="Build posting plan, content calendar, and campaign timing",
+            assignee_id=user_g2.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_g.id,
+        ),
+        models.Task(
+            project_id=project_j.id,
+            title="Campaign visuals and assets",
+            description="Finalize creative assets for launch promotion and event visibility",
+            assignee_id=user_g3.id,
+            status=models.TaskStatus.IN_PROGRESS,
+            due_date=date.today(),
+            created_by=lead_g.id,
+        ),
+        models.Task(
+            project_id=project_k.id,
+            title="Partner invitation outreach",
+            description="Contact strategic partners, manage invitations, and confirm attendance",
+            assignee_id=user_i1.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_i.id,
+        ),
+        models.Task(
+            project_id=project_k.id,
+            title="Sponsorship follow-up",
+            description="Coordinate sponsor discussions and partnership commitments",
+            assignee_id=user_i2.id,
+            status=models.TaskStatus.DONE,
+            due_date=date.today(),
+            created_by=lead_i.id,
+        ),
+        models.Task(
+            project_id=project_k.id,
+            title="Guest and partner relations desk",
+            description="Manage external guests, confirmations, and partner support workflow",
+            assignee_id=user_i3.id,
+            status=models.TaskStatus.IN_PROGRESS,
+            due_date=date.today(),
+            created_by=lead_i.id,
+        ),
     ]
     db.add_all(tasks)
     db.flush()
@@ -433,6 +717,9 @@ def seed_data(db: Session) -> None:
         models.Comment(task_id=tasks[0].id, author_id=lead_a.id, body="ركز على الاستقرار أولاً"),
         models.Comment(task_id=tasks[3].id, author_id=lead_b.id, body="أحتاج نسخة أولية اليوم"),
         models.Comment(task_id=tasks[6].id, author_id=lead_c.id, body="سأراجع النتائج مع الفريق"),
+        models.Comment(task_id=tasks[15].id, author_id=lead_h.id, body="تأكدوا من برنامج المتحدثين قبل نهاية اليوم"),
+        models.Comment(task_id=tasks[18].id, author_id=lead_f.id, body="نحتاج تنسيق الرسائل مع الإعلام المحلي"),
+        models.Comment(task_id=tasks[24].id, author_id=lead_i.id, body="تابعوا الشركاء المؤكدين وأغلقوا القائمة النهائية"),
     ]
     db.add_all(comments)
 

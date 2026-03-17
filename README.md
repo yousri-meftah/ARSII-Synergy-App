@@ -11,6 +11,7 @@ A modern, role‑based project and task management app built for ARSII‑Sfax to
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+export GEMINI_API_KEY=your_key_here
 uvicorn app.main:app --reload
 ```
 
@@ -20,6 +21,11 @@ cd arsii_mvp
 flutter pub get
 flutter run
 ```
+
+### AI
+- `GET /ai/insights` returns role-aware AI summaries.
+- `GET /ai/workload-conflicts` returns overload and blocker detection.
+- If `GEMINI_API_KEY` is missing, the backend falls back to rule-based insights.
 
 ## Seeded Accounts
 - `admin@arsii.local` / `admin123`

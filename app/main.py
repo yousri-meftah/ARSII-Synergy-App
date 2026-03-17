@@ -7,7 +7,7 @@ from app import models
 from app.auth import get_current_user
 from app.core.ws import WebSocketManager
 from app.core.seed import seed_data
-from app.routers import auth, users, teams, projects, tasks, comments, notifications, dashboard, workload
+from app.routers import auth, users, teams, projects, tasks, comments, notifications, dashboard, workload, ai
 
 app = FastAPI(title="ARSII-Sfax MVP")
 app.state.ws_manager = WebSocketManager()
@@ -111,3 +111,4 @@ app.include_router(comments.router)
 app.include_router(notifications.router)
 app.include_router(dashboard.router)
 app.include_router(workload.router)
+app.include_router(ai.router)
