@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:arsii_mvp/core/api_client.dart';
 import 'package:arsii_mvp/models/user.dart';
 

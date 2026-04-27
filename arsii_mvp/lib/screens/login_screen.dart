@@ -13,6 +13,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  bool _enableBiometrics = true;
 
   @override
   void dispose() {
@@ -111,6 +112,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                                 obscureText: true,
                               ),
+                              if (auth.biometricAvailable) ...[
+                                const SizedBox(height: 8),
+                                CheckboxListTile(
+                                  value: _enableBiometrics,
+                                  onChanged: auth.isLoading
+                                      ? null
+                                      : (value) {
+                                          setState(() {
+                                            _enableBiometrics = value ?? false;
+                                          });
+                                        },
+                                  contentPadding: EdgeInsets.zero,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  title: const Text('Enable biometric unlock'),
+                                  subtitle: const Text('Require fingerprint or face unlock for saved sessions on this device.'),
+                                ),
+                              ],
                               const SizedBox(height: 18),
                               ElevatedButton(
                                 onPressed: auth.isLoading
@@ -118,7 +136,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     : () async {
                                         await ref
                                             .read(authProvider.notifier)
-                                            .login(_emailCtrl.text.trim(), _passCtrl.text.trim());
+                                            .login(
+                                              _emailCtrl.text.trim(),
+                                              _passCtrl.text.trim(),
+                                              enableBiometrics: _enableBiometrics,
+                                            );
                                       },
                                 child: auth.isLoading
                                     ? const SizedBox(
@@ -128,6 +150,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       )
                                     : const Text('Login'),
                               ),
+                              if (auth.canUseBiometrics) ...[
+                                const SizedBox(height: 12),
+                                OutlinedButton.icon(
+                                  onPressed: auth.isLoading
+                                      ? null
+                                      : () async {
+                                          await ref.read(authProvider.notifier).unlockWithBiometrics();
+                                        },
+                                  icon: const Icon(Icons.fingerprint),
+                                  label: const Text('Use Biometrics'),
+                                ),
+                              ],
                               if (auth.error != null) ...[
                                 const SizedBox(height: 12),
                                 Text(
