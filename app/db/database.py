@@ -1,4 +1,5 @@
 import os
+from sqlalchemy.exc import ArgumentError
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
@@ -14,7 +15,14 @@ engine_kwargs = {
 if DATABASE_URL.startswith("sqlite"):
     engine_kwargs["connect_args"] = {"check_same_thread": False}
 
-engine = create_engine(DATABASE_URL, **engine_kwargs)
+try:
+    engine = create_engine(DATABASE_URL, **engine_kwargs)
+except (ValueError, ArgumentError) as exc:
+    raise RuntimeError(
+        "Invalid DATABASE_URL configuration. On Render, use the managed "
+        "Postgres connection string instead of a placeholder like ':PORT' or "
+        "a manually templated value."
+    ) from exc
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
